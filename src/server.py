@@ -19,8 +19,8 @@ app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
 def ohlcv():
     exchange = request.args.get('exchange')
     markets = sorted(list(set(request.args.get('markets').split(','))))
-    interval = int(request.args.get('interval'))
-    end_time = float(request.args.get('end_time'))
+    interval = request.args.get('interval', type=int)
+    end_time = request.args.get('end_time', type=float)
 
     dfs = []
     for market in markets:
