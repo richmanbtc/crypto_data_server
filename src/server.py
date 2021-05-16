@@ -2,6 +2,7 @@ import io
 import logging
 import click
 from flask import Flask, request, send_file
+import numpy as np
 import pandas as pd
 from store import Store
 from store_warmup_bybit import StoreWarpupBybit
@@ -34,7 +35,10 @@ def ohlcv():
             exchange=exchange,
             market=market,
         )
-        df = df.join(df_fr)
+        if df_fr is None:
+            df['fr'] = np.nan
+        else:
+            df = df.join(df_fr)
         if end_time is not None:
             df = df[df.index < pd.to_datetime(end_time, unit='s', utc=True)]
         df = df.reset_index()

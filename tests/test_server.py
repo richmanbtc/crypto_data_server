@@ -12,6 +12,7 @@ from server import app, initialize
 class TestServer(TestCase):
     def setUp(self):
         logger = logging.getLogger(__name__)
+        self.logger = logger
         logger.setLevel(level=logging.DEBUG)
 
         handler = logging.StreamHandler(sys.stderr)
@@ -44,3 +45,15 @@ class TestServer(TestCase):
         df = pd.read_parquet(f)
 
         self.assertEqual(sorted(df.reset_index()['market'].unique().tolist()), ['BTCUSD', 'ETHUSD'])
+
+    def test_ohlcv_future(self):
+        initialize(start_time=None, warmup=False, logger=self.logger)
+
+        res = self.app.get('/ohlcv.parquet?exchange=ftx&markets=ATOM-20191227&interval=3600')
+
+        f = io.BytesIO()
+        f.write(res.data)
+        f.seek(0)
+        df = pd.read_parquet(f)
+
+        self.assertEqual(sorted(df.reset_index()['market'].unique().tolist()), ['ATOM-20191227'])
