@@ -34,3 +34,13 @@ class TestServer(TestCase):
         df = pd.read_parquet(f)
 
         self.assertEqual(sorted(df.reset_index()['market'].unique().tolist()), ['BTCUSD', 'ETHUSD'])
+
+    def test_ohlcv_without_end_time(self):
+        res = self.app.get('/ohlcv.parquet?exchange=bybit&markets=BTCUSD,ETHUSD&interval=3600')
+
+        f = io.BytesIO()
+        f.write(res.data)
+        f.seek(0)
+        df = pd.read_parquet(f)
+
+        self.assertEqual(sorted(df.reset_index()['market'].unique().tolist()), ['BTCUSD', 'ETHUSD'])

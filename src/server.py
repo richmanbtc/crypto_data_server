@@ -35,7 +35,8 @@ def ohlcv():
             market=market,
         )
         df = df.join(df_fr)
-        df = df[df.index < pd.to_datetime(end_time, unit='s', utc=True)]
+        if end_time is not None:
+            df = df[df.index < pd.to_datetime(end_time, unit='s', utc=True)]
         df = df.reset_index()
         df['market'] = market
         df = df.set_index(['market', 'timestamp'])
