@@ -41,8 +41,9 @@ class StoreWarpupFtx:
 
         ftx = ccxt.ftx()
         markets = list(map(lambda x: x['name'], ftx.publicGetMarkets()['result']))
+        current_futures = list(map(lambda x: x['name'], ftx.publicGetFutures()['result']))
         expired_futures = list(map(lambda x: x['name'], ftx.publicGetExpiredFutures()['result']))
-        unique_symbols = list(set(markets + expired_futures))
+        unique_symbols = list(set(markets + current_futures + expired_futures))
 
         for symbol in unique_symbols:
             for interval in intervals:
@@ -66,7 +67,7 @@ class StoreWarpupFtx:
                         time.sleep(60)
 
             try:
-                if symbol in expired_futures:
+                if symbol in (current_futures + expired_futures):
                     self.store.get_df_fr(
                         exchange='ftx',
                         market=symbol,
