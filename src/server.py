@@ -98,7 +98,7 @@ def initialize(start_time=None, min_interval=None, warmup=False, logger=None):
 @click.option('--host', default='0.0.0.0', help='host')
 def start(start_time, min_interval, port, host):
     initialize(start_time=start_time, min_interval=min_interval, warmup=True, logger=app.logger)
-    app.run(debug=False, port=port, host=host, threaded=False)
+    app.run(debug=False, port=port, host=host, threaded=True)
 
 if __name__ == '__main__':
     start()
