@@ -62,7 +62,7 @@ class TestServer(TestCase):
     def test_ohlcv_future_df_is_none(self):
         initialize(start_time=None, warmup=False, logger=self.logger)
 
-        # ALGO-20190329 df is None
+        # ALGO-20190329 df is None (curl https://ftx.com/api/markets/ALGO-20190329/candles?resolution=3600)
         res = self.app.get('/ohlcv.parquet?exchange=ftx&markets=ALGO-20190329,ATOM-20191227&interval=3600')
 
         f = io.BytesIO()
