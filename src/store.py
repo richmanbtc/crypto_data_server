@@ -62,10 +62,7 @@ class Store:
 
         if exchange == 'bybit':
             if re.search(r'\d', market):
-                df = self.get_df_ohlcv(exchange, market, interval=60 * 60, price_type=None)
-                df['fr'] = 0.0
-                df = df[['fr']]
-                return df
+                return None
 
             df_pi = self.get_df_ohlcv(exchange, market, interval=60, price_type='premium_index')
             df_pi = df_pi.copy().reset_index()
@@ -77,6 +74,9 @@ class Store:
             df_pi['fr'] = (df_pi['cl'] + (interest_rate  - df_pi['cl']).clip(-0.0005, 0.0005)).shift(2)
             df_pi = df_pi[['fr']].dropna()
             return df_pi
+
+        if exchange == 'ftx' and '-PERP' not in market:
+            return None
 
         key = 'fr,exchange={},market={}'.format(exchange, market)
         fetcher = self.fetcher_builder.create_fetcher(exchange=exchange, logger=self.logger)

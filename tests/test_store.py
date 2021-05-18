@@ -30,14 +30,19 @@ class TestStore(TestCase):
         logger = logging.getLogger(__name__)
         store = Store(start_time=time.time() - 32 * 60 * 60, logger=logger)
         df = store.get_df_fr(exchange='bybit', market='BTCUSDU21')
-
-        self.assertTrue((df['fr'] == 0).all())
+        self.assertIsNone(df)
 
     def test_get_df_fr_ftx(self):
         logger = logging.getLogger(__name__)
         store = Store(start_time=time.time() - 24 * 60 * 60, logger=logger)
         df = store.get_df_fr(exchange='ftx', market='BTC-PERP')
         self.assertEqual(df.shape[0], 24)
+
+    def test_get_df_fr_ftx_future(self):
+        logger = logging.getLogger(__name__)
+        store = Store(start_time=time.time() - 24 * 60 * 60, logger=logger)
+        df = store.get_df_fr(exchange='ftx', market='BTC-20201225')
+        self.assertIsNone(df)
 
     def test_status(self):
         logger = logging.getLogger(__name__)
