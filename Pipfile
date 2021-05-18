@@ -13,6 +13,7 @@ crypto_data_fetcher = {git = "https://github.com/richmanbtc/crypto_data_fetcher.
 flask = "==1.1.2"
 click = "==7.1.2"
 pyarrow = "==4.0.0"
+Flask-Caching = "==1.10.1"
 
 [dev-packages]
 

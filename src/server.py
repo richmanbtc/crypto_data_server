@@ -2,6 +2,7 @@ import io
 import logging
 import click
 from flask import Flask, request, send_file
+from flask_caching import Cache
 import numpy as np
 import pandas as pd
 from store import Store
@@ -9,14 +10,27 @@ from store_warmup_bybit import StoreWarpupBybit
 from store_warmup_ftx import StoreWarpupFtx
 
 app = Flask(__name__)
-store = None
+app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
 
 logger = app.logger
 logger.setLevel(level=logging.DEBUG)
 
-app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
+cache = Cache(config={
+    'CACHE_TYPE': 'SimpleCache',
+    'CACHE_DEFAULT_TIMEOUT': 60 * 60,
+    'CACHE_THRESHOLD': 32
+})
+cache.init_app(app)
+
+store = None
+
+def make_cache_key(*args, **kwargs):
+    path = request.path
+    args = str(hash(frozenset(request.args.items())))
+    return (path + args).encode('utf-8')
 
 @app.route('/ohlcv.parquet')
+@cache.cached(key_prefix=make_cache_key)
 def ohlcv():
     exchange = request.args.get('exchange')
     markets = sorted(list(set(request.args.get('markets').split(','))))
