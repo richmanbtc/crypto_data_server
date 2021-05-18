@@ -45,6 +45,9 @@ def ohlcv():
             interval=interval,
             price_type=None
         )
+        if df is None:
+            app.logger.warning('df is None {} {} {}'.format(exchange, market, interval))
+            continue
         df_fr = store.get_df_fr(
             exchange=exchange,
             market=market,

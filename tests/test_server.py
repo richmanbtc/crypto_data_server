@@ -9,18 +9,19 @@ import pandas as pd
 sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/../src")
 from server import app, initialize
 
+logger = logging.getLogger(__name__)
+logger.setLevel(level=logging.DEBUG)
+
+handler = logging.StreamHandler(sys.stderr)
+handler.setLevel(logging.DEBUG)
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+handler.setFormatter(formatter)
+logger.addHandler(handler)
+
 class TestServer(TestCase):
     def setUp(self):
         logger = logging.getLogger(__name__)
         self.logger = logger
-        logger.setLevel(level=logging.DEBUG)
-
-        handler = logging.StreamHandler(sys.stderr)
-        handler.setLevel(logging.DEBUG)
-        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-        handler.setFormatter(formatter)
-        logger.addHandler(handler)
-
         self.app = app.test_client()
         start_time = time.time() - 2 * 24 * 60 * 60
         initialize(start_time=start_time, warmup=False, logger=logger)
@@ -57,3 +58,18 @@ class TestServer(TestCase):
         df = pd.read_parquet(f)
 
         self.assertEqual(sorted(df.reset_index()['market'].unique().tolist()), ['ATOM-20191227'])
+
+    def test_ohlcv_future_df_is_none(self):
+        initialize(start_time=None, warmup=False, logger=self.logger)
+
+        # ALGO-20190329 df is None
+        res = self.app.get('/ohlcv.parquet?exchange=ftx&markets=ALGO-20190329,ATOM-20191227&interval=3600')
+
+        f = io.BytesIO()
+        f.write(res.data)
+        f.seek(0)
+        df = pd.read_parquet(f)
+
+        self.assertEqual(sorted(df.reset_index()['market'].unique().tolist()), ['ATOM-20191227'])
+
+
