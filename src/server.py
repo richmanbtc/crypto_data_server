@@ -1,3 +1,4 @@
+from concurrent.futures import ThreadPoolExecutor
 import io
 import logging
 import os
@@ -39,8 +40,7 @@ def ohlcv():
     interval = request.args.get('interval', type=int)
     end_time = request.args.get('end_time', type=float)
 
-    dfs = []
-    for market in markets:
+    def get_df(market):
         df = store.get_df_ohlcv(
             exchange=exchange,
             market=market,
@@ -49,7 +49,7 @@ def ohlcv():
         )
         if df is None:
             app.logger.warning('df is None {} {} {}'.format(exchange, market, interval))
-            continue
+            return None
         df_fr = store.get_df_fr(
             exchange=exchange,
             market=market,
@@ -63,7 +63,11 @@ def ohlcv():
         df = df.reset_index()
         df['market'] = market
         df = df.set_index(['market', 'timestamp'])
-        dfs.append(df)
+        return df
+
+    with ThreadPoolExecutor(16) as executor:
+        dfs = executor.map(get_df, markets)
+    dfs = [df for df in dfs if df is not None]
 
     df = pd.concat(dfs)
     df = df.sort_values(['market', 'timestamp'])
