@@ -1,10 +1,12 @@
 import io
 import logging
+import os
 import click
 from flask import Flask, request, send_file
 from flask_caching import Cache
 import numpy as np
 import pandas as pd
+import psutil
 from store import Store
 from store_warmup_bybit import StoreWarpupBybit
 from store_warmup_ftx import StoreWarpupFtx
@@ -79,8 +81,12 @@ def ohlcv():
 
 @app.route('/status')
 def status():
+    process = psutil.Process(os.getpid())
     return {
-        'store': store.status()
+        'store': store.status(),
+        'memory': {
+            'rss': process.memory_info().rss
+        }
     }
 
 def initialize(start_time=None, min_interval=None, warmup=False, logger=None):

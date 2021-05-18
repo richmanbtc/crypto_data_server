@@ -72,4 +72,7 @@ class TestServer(TestCase):
 
         self.assertEqual(sorted(df.reset_index()['market'].unique().tolist()), ['ATOM-20191227'])
 
+    def test_status_smoke(self):
+        res = self.app.get('/status')
+        self.assertEqual(res.status, '200 OK')
 
