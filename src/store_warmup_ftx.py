@@ -56,7 +56,8 @@ class StoreWarpupFtx:
                             exchange='ftx',
                             market=symbol,
                             interval=interval,
-                            price_type=price_type
+                            price_type=price_type,
+                            force_fetch=True
                         )
                     except KeyboardInterrupt:
                         raise
@@ -71,6 +72,7 @@ class StoreWarpupFtx:
                     self.store.get_df_fr(
                         exchange='ftx',
                         market=symbol,
+                        force_fetch=True
                     )
             except KeyboardInterrupt:
                 raise

@@ -36,7 +36,7 @@ class Store:
             'dfs': dfs_status,
         }
 
-    def get_df_ohlcv(self, exchange=None, market=None, interval=None, price_type=None):
+    def get_df_ohlcv(self, exchange=None, market=None, interval=None, price_type=None, force_fetch=False):
         self.logger.info('get_df_ohlcv {} {} {} {}'.format(exchange, market, interval, price_type))
 
         key = 'ohlcv,exchange={},market={},interval={},price_type={}'.format(exchange, market, interval, price_type)
@@ -45,26 +45,27 @@ class Store:
         with self._get_lock(key):
             df = self.dfs.get(key)
 
-            df = fetcher.fetch_ohlcv(
-                df=df,
-                start_time=self.start_time,
-                interval_sec=interval,
-                market=market,
-                price_type=price_type
-            )
+            if force_fetch or df is None:
+                df = fetcher.fetch_ohlcv(
+                    df=df,
+                    start_time=self.start_time,
+                    interval_sec=interval,
+                    market=market,
+                    price_type=price_type
+                )
 
-            self.dfs[key] = df
+                self.dfs[key] = df
 
         return df
 
-    def get_df_fr(self, exchange=None, market=None):
+    def get_df_fr(self, exchange=None, market=None, force_fetch=False):
         self.logger.info('get_df_fr {} {}'.format(exchange, market))
 
         if exchange == 'bybit':
             if re.search(r'\d', market):
                 return None
 
-            df_pi = self.get_df_ohlcv(exchange, market, interval=60, price_type='premium_index')
+            df_pi = self.get_df_ohlcv(exchange, market, interval=60, price_type='premium_index', force_fetch=force_fetch)
             df_pi = df_pi.copy().reset_index()
             df_pi['timestamp'] = df_pi['timestamp'].dt.floor('8H')
             df_pi = pd.concat([
@@ -84,12 +85,13 @@ class Store:
         with self._get_lock(key):
             df = self.dfs.get(key)
 
-            df = fetcher.fetch_fr(
-                df=df,
-                start_time=self.start_time,
-                market=market,
-            )
+            if force_fetch or df is None:
+                df = fetcher.fetch_fr(
+                    df=df,
+                    start_time=self.start_time,
+                    market=market,
+                )
 
-            self.dfs[key] = df
+                self.dfs[key] = df
 
         return df

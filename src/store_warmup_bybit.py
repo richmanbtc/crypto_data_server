@@ -65,7 +65,8 @@ class StoreWarpupBybit:
                             exchange='bybit',
                             market=symbol,
                             interval=interval,
-                            price_type=price_type
+                            price_type=price_type,
+                            force_fetch=True
                         )
                     except KeyboardInterrupt:
                         raise

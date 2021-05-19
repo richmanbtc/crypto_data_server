@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "60e7cc34985915ecf243146a7ab827e054db2bc2750d456afae6c86c08010a41"
+            "sha256": "39870e14ead20551b60302c0807cf21d1c27d02f728934c8924db3a2640e1a38"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -171,7 +171,7 @@
         },
         "crypto-data-fetcher": {
             "git": "https://github.com/richmanbtc/crypto_data_fetcher.git",
-            "ref": "48502e79ea2819998eb2462a72598e498a7bef3c"
+            "ref": "e7fb02017a2f7153410a3d2ba1b775c81d5880b8"
         },
         "cryptography": {
             "hashes": [
