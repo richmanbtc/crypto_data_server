@@ -50,6 +50,9 @@ def ohlcv():
         if df is None:
             app.logger.warning('df is None {} {} {}'.format(exchange, market, interval))
             return None
+        if df.shape[0] == 0:
+            app.logger.warning('df.shape[0] == 0 {} {} {}'.format(exchange, market, interval))
+            return None
         df_fr = store.get_df_fr(
             exchange=exchange,
             market=market,
@@ -67,7 +70,7 @@ def ohlcv():
 
     with ThreadPoolExecutor(16) as executor:
         dfs = executor.map(get_df, markets)
-    dfs = [df for df in dfs if df is not None]
+        dfs = [df for df in dfs if df is not None]
 
     df = pd.concat(dfs)
     df = df.sort_values(['market', 'timestamp'])

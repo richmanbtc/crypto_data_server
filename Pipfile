@@ -9,7 +9,7 @@ numba = "==0.49.1"
 ccxt = "==1.48.40"
 pandas = "==1.1.5"
 ccxt_rate_limiter = {git = "https://github.com/richmanbtc/ccxt_rate_limiter.git",ref = "v0.0.1"}
-crypto_data_fetcher = {git = "https://github.com/richmanbtc/crypto_data_fetcher.git",ref = "v0.0.8"}
+crypto_data_fetcher = {git = "https://github.com/richmanbtc/crypto_data_fetcher.git",ref = "v0.0.9"}
 flask = "==1.1.2"
 click = "==7.1.2"
 pyarrow = "==4.0.0"
