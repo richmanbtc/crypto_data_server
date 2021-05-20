@@ -21,15 +21,16 @@ class Store:
         dfs_status = {}
 
         for key in self.dfs:
-            df = self.dfs.get(key)
-            if df is None:
-                dfs_status[key] = None
-            else:
-                dfs_status[key] = {
-                    'count': df.shape[0],
-                    'min_timestamp': df.index.min().isoformat(),
-                    'max_timestamp': df.index.max().isoformat(),
-                }
+            with self._get_lock(key):
+                df = self.dfs.get(key)
+                if df is None:
+                    dfs_status[key] = None
+                else:
+                    dfs_status[key] = {
+                        'count': df.shape[0],
+                        'min_timestamp': df.index.min().isoformat(),
+                        'max_timestamp': df.index.max().isoformat(),
+                    }
 
         return {
             'start_time': self.start_time,
@@ -55,6 +56,9 @@ class Store:
                 )
 
                 self.dfs[key] = df
+
+            if df is not None:
+                df = df.copy()
 
         return df
 
@@ -93,5 +97,8 @@ class Store:
                 )
 
                 self.dfs[key] = df
+
+            if df is not None:
+                df = df.copy()
 
         return df
