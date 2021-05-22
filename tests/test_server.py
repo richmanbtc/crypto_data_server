@@ -27,8 +27,9 @@ class TestServer(TestCase):
         initialize(start_time=start_time, warmup=False, logger=logger)
 
     def test_ohlcv(self):
+        start_time = time.time() - 2 * 24 * 60 * 60
         end_time = time.time() - 24 * 60 * 60
-        res = self.app.get('/ohlcv.parquet?exchange=bybit&markets=BTCUSD,ETHUSD&interval=3600&end_time={}'.format(end_time))
+        res = self.app.get('/ohlcv.parquet?exchange=bybit&markets=BTCUSD,ETHUSD&interval=3600&start_time={}&end_time={}'.format(start_time, end_time))
 
         f = io.BytesIO()
         f.write(res.data)
@@ -37,7 +38,7 @@ class TestServer(TestCase):
 
         self.assertEqual(sorted(df.reset_index()['market'].unique().tolist()), ['BTCUSD', 'ETHUSD'])
 
-    def test_ohlcv_without_end_time(self):
+    def test_ohlcv_without_start_time_and_end_time(self):
         res = self.app.get('/ohlcv.parquet?exchange=bybit&markets=BTCUSD,ETHUSD&interval=3600')
 
         f = io.BytesIO()

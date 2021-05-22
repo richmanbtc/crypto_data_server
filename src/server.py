@@ -38,6 +38,7 @@ def ohlcv():
     exchange = request.args.get('exchange')
     markets = sorted(list(set(request.args.get('markets').split(','))))
     interval = request.args.get('interval', type=int)
+    start_time = request.args.get('start_time', type=float)
     end_time = request.args.get('end_time', type=float)
 
     def get_df(market):
@@ -61,6 +62,8 @@ def ohlcv():
             df['fr'] = np.nan
         else:
             df = df.join(df_fr)
+        if start_time is not None:
+            df = df[pd.to_datetime(start_time, unit='s', utc=True) <= df.index]
         if end_time is not None:
             df = df[df.index < pd.to_datetime(end_time, unit='s', utc=True)]
         df = df.reset_index()
