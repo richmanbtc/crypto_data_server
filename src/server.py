@@ -40,6 +40,7 @@ def ohlcv():
     interval = request.args.get('interval', type=int)
     start_time = request.args.get('start_time', type=float)
     end_time = request.args.get('end_time', type=float)
+    mark = request.args.get('mark', type=int) != 0
 
     def get_df(market):
         df = store.get_df_ohlcv(
@@ -54,6 +55,8 @@ def ohlcv():
         if df.shape[0] == 0:
             app.logger.warning('df.shape[0] == 0 {} {} {}'.format(exchange, market, interval))
             return None
+
+        # join fr
         df_fr = store.get_df_fr(
             exchange=exchange,
             market=market,
@@ -62,6 +65,26 @@ def ohlcv():
             df['fr'] = np.nan
         else:
             df = df.join(df_fr)
+
+        # join mark price
+        if mark:
+            if exchange == 'bybit':
+                df_mark = store.get_df_ohlcv(
+                    exchange=exchange,
+                    market=market,
+                    interval=interval,
+                    price_type='mark'
+                )
+            else:
+                df_mark = None
+            if df_mark is None:
+                df['op_mark'] = np.nan
+                df['hi_mark'] = np.nan
+                df['lo_mark'] = np.nan
+                df['cl_mark'] = np.nan
+            else:
+                df = df.join(df_mark, rsuffix='_mark')
+
         if start_time is not None:
             df = df[pd.to_datetime(start_time, unit='s', utc=True) <= df.index]
         if end_time is not None:
