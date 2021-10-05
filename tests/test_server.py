@@ -36,6 +36,11 @@ class TestServer(TestCase):
         f.seek(0)
         df = pd.read_parquet(f)
 
+        self.assertTrue('op_mark' not in df.columns)
+        self.assertTrue('hi_mark' not in df.columns)
+        self.assertTrue('lo_mark' not in df.columns)
+        self.assertTrue('cl_mark' not in df.columns)
+
         self.assertEqual(sorted(df.reset_index()['market'].unique().tolist()), ['BTCUSD', 'ETHUSD'])
 
     def test_ohlcv_without_start_time_and_end_time(self):
