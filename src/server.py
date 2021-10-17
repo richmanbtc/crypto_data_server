@@ -11,6 +11,8 @@ import psutil
 from store import Store
 from store_warmup_bybit import StoreWarpupBybit
 from store_warmup_ftx import StoreWarpupFtx
+from store_warmup_binance_future import StoreWarpupBinanceFuture
+from store_warmup_okex import StoreWarpupOkex
 
 app = Flask(__name__)
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
@@ -131,21 +133,34 @@ def initialize(start_time=None, min_interval=None, warmup=False, logger=None):
         start_time=start_time,
     )
 
-    warpup_bybit = StoreWarpupBybit(
-        store=store,
-        logger=logger,
-        min_interval=min_interval,
-    )
     if warmup:
+        warpup_bybit = StoreWarpupBybit(
+            store=store,
+            logger=logger,
+            min_interval=min_interval,
+        )
         warpup_bybit.start()
 
-    warpup_ftx = StoreWarpupFtx(
-        store=store,
-        logger=logger,
-        min_interval=min_interval,
-    )
-    if warmup:
+        warpup_ftx = StoreWarpupFtx(
+            store=store,
+            logger=logger,
+            min_interval=min_interval,
+        )
         warpup_ftx.start()
+
+        warpup_binance_future = StoreWarpupBinanceFuture(
+            store=store,
+            logger=logger,
+            min_interval=min_interval,
+        )
+        warpup_binance_future.start()
+
+        warpup_okex = StoreWarpupOkex(
+            store=store,
+            logger=logger,
+            min_interval=min_interval,
+        )
+        warpup_okex.start()
 
 @click.command()
 @click.option('--start_time', type=int, default=None, help='data start time')

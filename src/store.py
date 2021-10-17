@@ -83,6 +83,9 @@ class Store:
         if exchange == 'ftx' and '-PERP' not in market:
             return None
 
+        if exchange in ['binance_future', 'okex']:
+            return None
+
         key = 'fr,exchange={},market={}'.format(exchange, market)
         fetcher = self.fetcher_builder.create_fetcher(exchange=exchange, logger=self.logger)
 
