@@ -83,7 +83,7 @@ class Store:
         if exchange == 'ftx' and '-PERP' not in market:
             return None
 
-        if exchange in ['binance_future', 'okex']:
+        if exchange in ['binance_future', 'binance_spot', 'okex']:
             return None
 
         key = 'fr,exchange={},market={}'.format(exchange, market)

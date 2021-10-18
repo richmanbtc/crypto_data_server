@@ -9,6 +9,7 @@ from ccxt_rate_limiter.rate_limiter_group import RateLimiterGroup
 from crypto_data_fetcher.bybit import BybitFetcher
 from crypto_data_fetcher.ftx import FtxFetcher
 from crypto_data_fetcher.binance_future import BinanceFutureFetcher
+from crypto_data_fetcher.binance_spot import BinanceSpotFetcher
 from crypto_data_fetcher.okex import OkexFetcher
 
 class DataFetcherBuilder:
@@ -31,6 +32,11 @@ class DataFetcherBuilder:
             )
         elif exchange == 'binance_future':
             return BinanceFutureFetcher(
+                ccxt_client=self._create_binance(),
+                logger=logger,
+            )
+        elif exchange == 'binance_spot':
+            return BinanceSpotFetcher(
                 ccxt_client=self._create_binance(),
                 logger=logger,
             )

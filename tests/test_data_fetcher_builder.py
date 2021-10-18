@@ -4,6 +4,7 @@ from unittest import TestCase
 from crypto_data_fetcher.bybit import BybitFetcher
 from crypto_data_fetcher.ftx import FtxFetcher
 from crypto_data_fetcher.binance_future import BinanceFutureFetcher
+from crypto_data_fetcher.binance_spot import BinanceSpotFetcher
 from crypto_data_fetcher.okex import OkexFetcher
 
 sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/../src")
@@ -24,6 +25,11 @@ class TestDataFetcherBuilder(TestCase):
         builder = DataFetcherBuilder()
         fetcher = builder.create_fetcher(exchange='binance_future')
         self.assertIsInstance(fetcher, BinanceFutureFetcher)
+
+    def test_binance_spot(self):
+        builder = DataFetcherBuilder()
+        fetcher = builder.create_fetcher(exchange='binance_spot')
+        self.assertIsInstance(fetcher, BinanceSpotFetcher)
 
     def test_okex(self):
         builder = DataFetcherBuilder()

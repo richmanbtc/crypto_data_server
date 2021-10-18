@@ -26,6 +26,12 @@ class TestStore(TestCase):
         df = store.get_df_ohlcv(exchange='binance_future', market='BTCUSDT', interval=60 * 60, price_type=None)
         self.assertEqual(df.shape[0], 23)
 
+    def test_get_df_ohlcv_binance_spot(self):
+        logger = logging.getLogger(__name__)
+        store = Store(start_time=time.time() - 24 * 60 * 60, logger=logger)
+        df = store.get_df_ohlcv(exchange='binance_spot', market='BTCUSDT', interval=60 * 60, price_type=None)
+        self.assertEqual(df.shape[0], 23)
+
     def test_get_df_ohlcv_okex(self):
         logger = logging.getLogger(__name__)
         store = Store(start_time=time.time() - 24 * 60 * 60, logger=logger)
@@ -60,6 +66,12 @@ class TestStore(TestCase):
         logger = logging.getLogger(__name__)
         store = Store(start_time=time.time() - 24 * 60 * 60, logger=logger)
         df = store.get_df_fr(exchange='binance_future', market='BTCUSDT')
+        self.assertIsNone(df)
+
+    def test_get_df_fr_binance_spot(self):
+        logger = logging.getLogger(__name__)
+        store = Store(start_time=time.time() - 24 * 60 * 60, logger=logger)
+        df = store.get_df_fr(exchange='binance_spot', market='BTCUSDT')
         self.assertIsNone(df)
 
     def test_get_df_fr_okex(self):

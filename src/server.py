@@ -12,6 +12,7 @@ from store import Store
 from store_warmup_bybit import StoreWarpupBybit
 from store_warmup_ftx import StoreWarpupFtx
 from store_warmup_binance_future import StoreWarpupBinanceFuture
+from store_warmup_binance_spot import StoreWarpupBinanceSpot
 from store_warmup_okex import StoreWarpupOkex
 
 app = Flask(__name__)
@@ -154,6 +155,13 @@ def initialize(start_time=None, min_interval=None, warmup=False, logger=None):
             min_interval=min_interval,
         )
         warpup_binance_future.start()
+
+        warpup_binance_spot = StoreWarpupBinanceSpot(
+            store=store,
+            logger=logger,
+            min_interval=min_interval,
+        )
+        warpup_binance_spot.start()
 
         warpup_okex = StoreWarpupOkex(
             store=store,
