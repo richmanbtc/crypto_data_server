@@ -44,6 +44,7 @@ def ohlcv():
     start_time = request.args.get('start_time', type=float)
     end_time = request.args.get('end_time', type=float)
     mark = request.args.get('mark', 0, type=int) != 0
+    index = request.args.get('index', 0, type=int) != 0
 
     def get_df(market):
         df = store.get_df_ohlcv(
@@ -87,6 +88,25 @@ def ohlcv():
                 df['cl_mark'] = np.nan
             else:
                 df = df.join(df_mark, rsuffix='_mark')
+
+        # join index price
+        if index:
+            if exchange == 'ftx':
+                df_index = store.get_df_ohlcv(
+                    exchange=exchange,
+                    market=market,
+                    interval=interval,
+                    price_type='index'
+                )
+            else:
+                df_index = None
+            if df_index is None:
+                df['op_index'] = np.nan
+                df['hi_index'] = np.nan
+                df['lo_index'] = np.nan
+                df['cl_index'] = np.nan
+            else:
+                df = df.join(df_index, rsuffix='_index')
 
         if start_time is not None:
             df = df[pd.to_datetime(start_time, unit='s', utc=True) <= df.index]

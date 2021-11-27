@@ -95,6 +95,23 @@ class TestServer(TestCase):
 
         self.assertEqual(sorted(df.reset_index()['market'].unique().tolist()), ['BTCUSD', 'ETHUSD'])
 
+    def test_ohlcv_with_index(self):
+        start_time = time.time() - 2 * 24 * 60 * 60
+        end_time = time.time() - 24 * 60 * 60
+        res = self.app.get('/ohlcv.parquet?exchange=ftx&markets=BTC-PERP,ETH-PERP&interval=3600&start_time={}&end_time={}&index=1'.format(start_time, end_time))
+
+        f = io.BytesIO()
+        f.write(res.data)
+        f.seek(0)
+        df = pd.read_parquet(f)
+
+        self.assertTrue('op_index' in df.columns)
+        self.assertTrue('hi_index' in df.columns)
+        self.assertTrue('lo_index' in df.columns)
+        self.assertTrue('cl_index' in df.columns)
+
+        self.assertEqual(sorted(df.reset_index()['market'].unique().tolist()), ['BTC-PERP', 'ETH-PERP'])
+
     def test_status_smoke(self):
         res = self.app.get('/status')
         self.assertEqual(res.status, '200 OK')

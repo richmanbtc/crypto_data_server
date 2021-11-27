@@ -37,6 +37,7 @@ class StoreWarpupFtx:
 
         price_types = [
             None,
+            'index',
         ]
 
         ftx = ccxt.ftx()
@@ -51,6 +52,8 @@ class StoreWarpupFtx:
                     continue
 
                 for price_type in price_types:
+                    if price_type == 'index' and '-PERP' not in symbol:
+                        continue
                     try:
                         self.store.get_df_ohlcv(
                             exchange='ftx',
