@@ -14,6 +14,7 @@ from store_warmup_ftx import StoreWarpupFtx
 from store_warmup_binance_future import StoreWarpupBinanceFuture
 from store_warmup_binance_spot import StoreWarpupBinanceSpot
 from store_warmup_okex import StoreWarpupOkex
+from store_warmup_kraken import StoreWarpupKraken
 
 app = Flask(__name__)
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
@@ -189,6 +190,13 @@ def initialize(start_time=None, min_interval=None, warmup=False, logger=None):
             min_interval=min_interval,
         )
         warpup_okex.start()
+
+        warpup_kraken = StoreWarpupKraken(
+            store=store,
+            logger=logger,
+            min_interval=min_interval,
+        )
+        warpup_kraken.start()
 
 @click.command()
 @click.option('--start_time', type=int, default=None, help='data start time')

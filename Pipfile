@@ -7,8 +7,8 @@ name = "pypi"
 numpy = "==1.18.5"
 ccxt = "==1.57.43"
 pandas = "==1.2.3"
-ccxt_rate_limiter = {git = "https://github.com/richmanbtc/ccxt_rate_limiter.git",ref = "v0.0.3"}
-crypto_data_fetcher = {git = "https://github.com/richmanbtc/crypto_data_fetcher.git",ref = "v0.0.15"}
+ccxt_rate_limiter = {git = "https://github.com/richmanbtc/ccxt_rate_limiter.git",ref = "v0.0.6"}
+crypto_data_fetcher = {git = "https://github.com/richmanbtc/crypto_data_fetcher.git",ref = "v0.0.18"}
 flask = "==1.1.2"
 click = "==7.1.2"
 pyarrow = "==4.0.0"
