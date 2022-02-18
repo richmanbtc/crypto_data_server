@@ -1,7 +1,9 @@
 import logging
 import os
 import sys
+import tempfile
 import time
+import pandas as pd
 from unittest import TestCase
 
 sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/../src")
@@ -36,6 +38,12 @@ class TestStore(TestCase):
         logger = logging.getLogger(__name__)
         store = Store(start_time=time.time() - 24 * 60 * 60, logger=logger)
         df = store.get_df_ohlcv(exchange='okex', market='BTC-USDT-SWAP', interval=60 * 60, price_type=None)
+        self.assertEqual(df.shape[0], 23)
+
+    def test_get_df_ohlcv_kraken(self):
+        logger = logging.getLogger(__name__)
+        store = Store(start_time=time.time() - 24 * 60 * 60, logger=logger)
+        df = store.get_df_ohlcv(exchange='kraken', market='XXBTZUSD', interval=60 * 60, price_type=None)
         self.assertEqual(df.shape[0], 23)
 
     def test_get_df_fr_bybit(self):
@@ -87,3 +95,15 @@ class TestStore(TestCase):
         status = store.status()
         print(status)
         self.assertEqual(status['dfs']['ohlcv,exchange=bybit,market=BTCUSD,interval=3600,price_type=None']['count'], 23)
+
+    def test_data_dir(self):
+        logger = logging.getLogger(__name__)
+        with tempfile.TemporaryDirectory() as dname:
+            store = Store(
+                start_time=time.time() - 24 * 60 * 60,
+                data_dir=dname,
+                logger=logger,
+            )
+            store.get_df_ohlcv(exchange='ftx', market='BTC-PERP', interval=60 * 60, price_type=None)
+            df = pd.read_parquet(os.path.join(dname, 'ohlcv,exchange=ftx,market=BTC-PERP,interval=3600,price_type=None.parquet'))
+            self.assertEqual(df.shape[0], 23)
