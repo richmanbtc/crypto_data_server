@@ -153,7 +153,7 @@ def initialize(start_time=None, min_interval=None, warmup=False, logger=None):
     store = Store(
         logger=logger,
         start_time=start_time,
-        data_dir=os.path.join(os.path.dirname(__file__), 'data/store'),
+        # data_dir=os.path.join(os.path.dirname(__file__), 'data/store'),
     )
 
     if warmup:
